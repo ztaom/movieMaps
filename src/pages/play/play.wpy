@@ -1,0 +1,110 @@
+<style lang="less">
+.title{}
+.intr{
+  font-size:24rpx; display:block; overflow:hidden;
+  .inner{height:40rpx;}
+}
+</style>
+<template>
+  <view class="container">
+    <videoCom :videoUrl="videoUrl"></videoCom>
+    <view @tap="playTap">play</view>
+    <!-- 复制u密令 -->
+    <view @tap="copyUML">拷贝u密令</view>
+
+    <!-- 视频简介 -->
+    <view>
+      <view class="intr">
+        <text @tap="tapSliceIntr" wx:if="{{showSliceIntr}}">{{sliceIntr}}</text>
+        <text @tap="tapAllIntr" wx:if="{{showAllIntr}}">{{allIntr}}</text>
+      </view>
+      <text>3,983,442,790次播放</text>
+    </view>
+
+    <!-- 猜你喜欢 -->
+    <view class="relatevideo">
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <relateVideo :items="item"></relateVideo>
+      </repeat>
+    </view>
+
+    <!-- 评论 -->
+    <view class="comment"></view>
+    <!-- <panel>
+    </panel> -->
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import videoCom from '../../components/videoCom'
+  import relateVideo from '../../components/relateVideo'
+  import testMixin from '../../mixins/test'
+  import listData from '../../config/listMock'
+
+  const intrText = '高端牙科诊所的牙医程皓业余时间经常帮别人出谋划策追女孩，追女孩有无数种方法的他却还没有恋爱过。受过情伤专治各种渣男的罗玥来看牙病，偶遇程皓，两人冤家路窄。两个彼此讨厌的人，开始了一段啼笑皆非的情感追逐战。程皓的合伙人张铭阳动了真心让程皓帮忙追一个女孩，而这个女孩竟是程皓曾经的暗恋对象。程皓的朋友邹北业让程皓出主意追一个女模特。三个遇到不同情感问题的男人成了铁三角，最终他们都找到了最合适自己的另一半，同时也收获了成长。'
+
+  export default class Play extends wepy.page {
+    config = {
+      navigationBarTitleText: 'play'
+    }
+
+    onReady() {
+      this.currentVideo = wx.createVideoContext('video')
+    }
+
+    data = {
+      videoUrl: 'https://gw.alicdn.com/bao/uploaded/TB10kt0kNTI8KJjSspiXXbM4FXa.mp4?spm=a1z3i.a4.0.0.4228487fVUqkML&file=TB10kt0kNTI8KJjSspiXXbM4FXa.mp4',
+      showAllIntr: false,
+      showSliceIntr: true,
+      allIntr: intrText,
+      sliceIntr: intrText.slice(0, 50),
+      list: listData
+    }
+    mixins = [testMixin]
+
+    components = {
+      videoCom: videoCom,
+      relateVideo: relateVideo
+    }
+
+    methods = {
+      playTap() {
+        this.currentVideo.play()
+      },
+
+      // 设置并拷贝u密令
+      copyUML() {
+        wx.setClipboardData({
+          data: '复制这条信息＄CgDdZy41G6p＄后打开👉优酷👈【立即领取】',
+          success: function (res) {
+            wx.getClipboardData({
+              success: function (res) {
+                wx.showToast({
+                  title: '复制成功',
+                  duration: 2000
+                });
+                console.log(res.data) // data
+              }
+            })
+          }
+        })
+      },
+
+      // 展开收起简介
+      tapSliceIntr() {
+        this.showAllIntr = true
+        this.showSliceIntr = false
+      },
+      tapAllIntr() {
+        this.showAllIntr = false
+        this.showSliceIntr = true
+      }
+    }
+
+    onLoad(params, data) {
+      console.log(params.atest)
+      console.log(listData)
+    }
+  }
+</script>
